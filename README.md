@@ -4,12 +4,11 @@ Generate a `.tar.gz` archive in GitHub Actions.
 
 ```yaml
 - uses: skaji/action-generate-tarball@v1
-  with:
-    top-directory: foo
 ```
 
-This creates `foo.tar.gz` in the action working directory. Files inside the
-archive are stored under the `foo/` top-level directory.
+This archives the contents of the action working directory, creates a `.tar.gz`
+file named after that directory, and stores files under the same top-level
+directory name in the archive.
 
 The gzip compression level is fixed at `9`. TAR archives are generated with
 `node-tar` using USTAR-compatible headers and `noPax: true`. Paths, symlink
@@ -20,8 +19,9 @@ tarball is written.
 
 ### `top-directory`
 
-Required. Top-level directory name inside the archive. If `output` is omitted,
-the generated file is `<top-directory>.tar.gz`.
+Optional. Top-level directory name inside the archive. Defaults to the basename
+of `source-directory`. If `output` is omitted, the generated file is
+`<top-directory>.tar.gz`.
 
 ### `output`
 
@@ -41,7 +41,7 @@ tested against Linux-style relative paths from `source-directory`.
 ```yaml
 - uses: skaji/action-generate-tarball@v1
   with:
-    top-directory: foo
+    source-directory: foo
     exclude: |
       ^\.git/
       ^node_modules/

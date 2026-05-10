@@ -12,8 +12,8 @@ export const USTAR_MAX_FILE_SIZE = 0o77777777777;
 
 export interface TarballOptions {
   sourceDirectory: string;
-  topDirectory: string;
-  output: string;
+  topDirectory?: string;
+  output?: string;
   exclude?: string[];
 }
 
@@ -27,8 +27,10 @@ export async function createTarball(
   options: TarballOptions,
 ): Promise<TarballResult> {
   const sourceDirectory = path.resolve(options.sourceDirectory);
-  const topDirectory = normalizeTopDirectory(options.topDirectory);
-  const output = path.resolve(options.output);
+  const topDirectory = normalizeTopDirectory(
+    options.topDirectory || path.basename(sourceDirectory),
+  );
+  const output = path.resolve(options.output || `${topDirectory}.tar.gz`);
   const exclude = compileExcludePatterns(options.exclude || []);
   const outputRelative = relativeArchivePath(sourceDirectory, output);
 
@@ -67,9 +69,9 @@ export async function createTarball(
 
 export async function run(): Promise<void> {
   try {
-    const topDirectory = core.getInput("top-directory", { required: true });
     const sourceDirectory = core.getInput("source-directory") || process.cwd();
-    const output = core.getInput("output") || `${topDirectory}.tar.gz`;
+    const topDirectory = core.getInput("top-directory");
+    const output = core.getInput("output");
     const exclude = parseExcludeInput(core.getInput("exclude"));
 
     const result = await createTarball({

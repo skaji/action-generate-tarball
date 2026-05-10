@@ -23,7 +23,7 @@ jobs:
       - id: generate
         uses: ./
         with:
-          top-directory: action-generate-tarball
+          source-directory: .
           exclude: |
             ^\.git/
             ^node_modules/

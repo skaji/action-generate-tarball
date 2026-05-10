@@ -3,8 +3,8 @@ description: 'Generate a tar.gz archive with files under a top-level directory'
 author: 'Shoichi Kaji'
 inputs:
   top-directory:
-    description: 'Top-level directory name inside the tarball. The default output file is <top-directory>.tar.gz.'
-    required: true
+    description: 'Top-level directory name inside the tarball. Defaults to the basename of source-directory.'
+    required: false
   output:
     description: 'Path to the tar.gz file to create.'
     required: false

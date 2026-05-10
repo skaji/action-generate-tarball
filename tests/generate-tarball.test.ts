@@ -40,6 +40,34 @@ describe("generate tarball", () => {
     ]);
   });
 
+  it("defaults the top directory and output name from the source directory", async () => {
+    const parent = await fsp.mkdtemp(
+      path.join(os.tmpdir(), "generate-tarball-"),
+    );
+    const sourceDirectory = path.join(parent, "foo");
+    await fsp.mkdir(sourceDirectory);
+    await fsp.writeFile(path.join(sourceDirectory, "README.md"), "readme");
+
+    const outputDir = await fsp.mkdtemp(
+      path.join(os.tmpdir(), "generate-tarball-output-"),
+    );
+    const oldCwd = process.cwd();
+
+    try {
+      process.chdir(outputDir);
+      const result = await createTarball({ sourceDirectory });
+
+      await expect(fsp.realpath(result.output)).resolves.toBe(
+        await fsp.realpath(path.join(outputDir, "foo.tar.gz")),
+      );
+
+      const { stdout } = await execFileAsync("tar", ["-tzf", result.output]);
+      expect(stdout.trim()).toBe("foo/README.md");
+    } finally {
+      process.chdir(oldCwd);
+    }
+  });
+
   it("uses the maximum gzip compression level and ustar headers", async () => {
     const dir = await fsp.mkdtemp(path.join(os.tmpdir(), "generate-tarball-"));
     await fsp.writeFile(path.join(dir, "README.md"), "readme");

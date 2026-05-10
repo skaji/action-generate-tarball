@@ -22050,8 +22050,10 @@ var USTAR_MAX_LINKPATH_BYTES = 100;
 var USTAR_MAX_FILE_SIZE = 8589934591;
 async function createTarball(options) {
   const sourceDirectory = path.resolve(options.sourceDirectory);
-  const topDirectory = normalizeTopDirectory(options.topDirectory);
-  const output = path.resolve(options.output);
+  const topDirectory = normalizeTopDirectory(
+    options.topDirectory || path.basename(sourceDirectory)
+  );
+  const output = path.resolve(options.output || `${topDirectory}.tar.gz`);
   const exclude = compileExcludePatterns(options.exclude || []);
   const outputRelative = relativeArchivePath(sourceDirectory, output);
   await fsp.mkdir(path.dirname(output), { recursive: true });
@@ -22084,9 +22086,9 @@ async function createTarball(options) {
 }
 async function run() {
   try {
-    const topDirectory = getInput("top-directory", { required: true });
     const sourceDirectory = getInput("source-directory") || process.cwd();
-    const output = getInput("output") || `${topDirectory}.tar.gz`;
+    const topDirectory = getInput("top-directory");
+    const output = getInput("output");
     const exclude = parseExcludeInput(getInput("exclude"));
     const result = await createTarball({
       sourceDirectory,
