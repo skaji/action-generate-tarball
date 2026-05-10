@@ -1,0 +1,22 @@
+name: 'Generate tarball'
+description: 'Generate a tar.gz archive with files under a top-level directory'
+author: 'Shoichi Kaji'
+inputs:
+  top-directory:
+    description: 'Top-level directory name inside the tarball. The default output file is <top-directory>.tar.gz.'
+    required: true
+  output:
+    description: 'Path to the tar.gz file to create.'
+    required: false
+  cwd:
+    description: 'Directory whose contents are archived. Defaults to the current working directory.'
+    required: false
+  exclude:
+    description: 'Newline-separated regular expressions. Paths matching any expression are excluded.'
+    required: false
+outputs:
+  tarball:
+    description: 'Absolute path to the generated tar.gz file.'
+runs:
+  using: 'node24'
+  main: 'dist/index.js'
