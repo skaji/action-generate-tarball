@@ -26,9 +26,9 @@ the generated file is `<top-directory>.tar.gz`.
 ### `output`
 
 Optional. Path to the tarball to create. Relative paths are resolved from the
-action working directory, not from `cwd`.
+action working directory, not from `source-directory`.
 
-### `cwd`
+### `source-directory`
 
 Optional. Directory whose contents are archived. Defaults to the current working
 directory.
@@ -36,7 +36,7 @@ directory.
 ### `exclude`
 
 Optional. Newline-separated JavaScript regular expressions. Each expression is
-tested against Linux-style relative paths from `cwd`.
+tested against Linux-style relative paths from `source-directory`.
 
 ```yaml
 - uses: skaji/action-generate-tarball@v1

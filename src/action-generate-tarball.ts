@@ -11,7 +11,7 @@ export const USTAR_MAX_LINKPATH_BYTES = 100;
 export const USTAR_MAX_FILE_SIZE = 0o77777777777;
 
 export interface TarballOptions {
-  cwd: string;
+  sourceDirectory: string;
   topDirectory: string;
   output: string;
   exclude?: string[];
@@ -26,17 +26,17 @@ export interface TarballResult {
 export async function createTarball(
   options: TarballOptions,
 ): Promise<TarballResult> {
-  const cwd = path.resolve(options.cwd);
+  const sourceDirectory = path.resolve(options.sourceDirectory);
   const topDirectory = normalizeTopDirectory(options.topDirectory);
   const output = path.resolve(options.output);
   const exclude = compileExcludePatterns(options.exclude || []);
-  const outputRelative = relativeArchivePath(cwd, output);
+  const outputRelative = relativeArchivePath(sourceDirectory, output);
 
   await fsp.mkdir(path.dirname(output), { recursive: true });
 
   const entries = await collectEntries({
-    root: cwd,
-    dir: cwd,
+    root: sourceDirectory,
+    dir: sourceDirectory,
     topDirectory,
     exclude,
     outputRelative,
@@ -44,7 +44,7 @@ export async function createTarball(
 
   await tar.create(
     {
-      cwd,
+      cwd: sourceDirectory,
       file: output,
       gzip: { level: GZIP_LEVEL },
       noMtime: true,
@@ -68,12 +68,12 @@ export async function createTarball(
 export async function run(): Promise<void> {
   try {
     const topDirectory = core.getInput("top-directory", { required: true });
-    const cwd = core.getInput("cwd") || process.cwd();
+    const sourceDirectory = core.getInput("source-directory") || process.cwd();
     const output = core.getInput("output") || `${topDirectory}.tar.gz`;
     const exclude = parseExcludeInput(core.getInput("exclude"));
 
     const result = await createTarball({
-      cwd,
+      sourceDirectory,
       topDirectory,
       output,
       exclude,

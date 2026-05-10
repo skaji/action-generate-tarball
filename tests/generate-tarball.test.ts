@@ -25,7 +25,7 @@ describe("generate tarball", () => {
 
     const output = path.join(dir, "foo.tar.gz");
     const result = await createTarball({
-      cwd: dir,
+      sourceDirectory: dir,
       topDirectory: "foo",
       output,
     });
@@ -46,7 +46,7 @@ describe("generate tarball", () => {
 
     const output = path.join(dir, "foo.tar.gz");
     await createTarball({
-      cwd: dir,
+      sourceDirectory: dir,
       topDirectory: "foo",
       output,
     });
@@ -64,7 +64,7 @@ describe("generate tarball", () => {
 
     await expect(
       createTarball({
-        cwd: dir,
+        sourceDirectory: dir,
         topDirectory: "foo",
         output: path.join(dir, "foo.tar.gz"),
       }),
@@ -87,7 +87,7 @@ describe("generate tarball", () => {
 
     const output = path.join(dir, "foo.tar.gz");
     const result = await createTarball({
-      cwd: dir,
+      sourceDirectory: dir,
       topDirectory: "foo",
       output,
       exclude: ["\\.log$", "^dist/"],
@@ -100,20 +100,20 @@ describe("generate tarball", () => {
   });
 
   it("resolves relative output paths from the process working directory", async () => {
-    const cwd = await fsp.mkdtemp(
-      path.join(os.tmpdir(), "generate-tarball-cwd-"),
+    const sourceDirectory = await fsp.mkdtemp(
+      path.join(os.tmpdir(), "generate-tarball-source-"),
     );
     const outputDir = await fsp.mkdtemp(
       path.join(os.tmpdir(), "generate-tarball-output-"),
     );
     const oldCwd = process.cwd();
 
-    await fsp.writeFile(path.join(cwd, "README.md"), "readme");
+    await fsp.writeFile(path.join(sourceDirectory, "README.md"), "readme");
 
     try {
       process.chdir(outputDir);
       const result = await createTarball({
-        cwd,
+        sourceDirectory,
         topDirectory: "foo",
         output: "foo.tar.gz",
       });
@@ -121,7 +121,9 @@ describe("generate tarball", () => {
       await expect(fsp.realpath(result.output)).resolves.toBe(
         await fsp.realpath(path.join(outputDir, "foo.tar.gz")),
       );
-      await expect(fsp.stat(path.join(cwd, "foo.tar.gz"))).rejects.toThrow();
+      await expect(
+        fsp.stat(path.join(sourceDirectory, "foo.tar.gz")),
+      ).rejects.toThrow();
       await expect(
         fsp.stat(path.join(outputDir, "foo.tar.gz")),
       ).resolves.toBeDefined();

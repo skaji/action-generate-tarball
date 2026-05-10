@@ -8,7 +8,7 @@ inputs:
   output:
     description: 'Path to the tar.gz file to create.'
     required: false
-  cwd:
+  source-directory:
     description: 'Directory whose contents are archived. Defaults to the current working directory.'
     required: false
   exclude:
