@@ -43,9 +43,9 @@ tested against Linux-style relative paths from `source-directory`.
   with:
     top-directory: foo
     exclude: |
-      ^\\.git/
+      ^\.git/
       ^node_modules/
-      \\.log$
+      \.log$
 ```
 
 ## Outputs

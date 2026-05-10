@@ -25,6 +25,8 @@ jobs:
         with:
           top-directory: action-generate-tarball
           exclude: |
-            ^\\.git/
+            ^\.git/
             ^node_modules/
-      - run: tar -tzf "${{ steps.generate.outputs.tarball }}" | grep '^action-generate-tarball/README.md$'
+      - run: |
+          tar -tzf "${{ steps.generate.outputs.tarball }}" | grep '^action-generate-tarball/README.md$'
+          ! tar -tzf "${{ steps.generate.outputs.tarball }}" | grep '^action-generate-tarball/.git/'

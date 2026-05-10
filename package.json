@@ -1,6 +1,6 @@
 {
   "name": "action-generate-tarball",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Generate tar.gz archives for GitHub Actions",
   "main": "dist/index.js",
